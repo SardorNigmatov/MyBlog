@@ -1,0 +1,49 @@
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+
+
+{% block content %}
+<h1 style="text-align: center">Mening Blogim</h1>
+{% if tag %}
+<h2>Posts tagged with "{{ tag.name }}"</h2>
+{% endif %}
+{% for post in posts %}
+<h2>
+    <a href="{{ post.get_absolute_url }}">
+        {{ post.title }}
+    </a>
+</h2>
+
+    <br>
+
+<div>
+{% if post.image %}
+    <img src="{{ post.image.url }}" alt="{{ post.title }}" width="400" height="300">
+{% endif %}
+</div>
+
+
+<div>{% if post.video %}
+<video width="400" height="300" controls>
+    <source src="{{ post.video.url }}">
+    Sizning brauzeringiz videoni qo'llab-quvvatlamaydi.
+</video>
+{% endif %}
+</div>
+
+<p class="tags">
+    Tags:
+    {% for tag in post.tags.all %}
+    <a href="{% url 'blog:post_list_by_tag' tag.slug %}">
+        {{ tag.name }}
+    </a>
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<p class="date">
+    Published {{ post.publish }} by {{ post.author }}
+</p>
+{{ post.body|truncatewords_html:30 }}
+{% endfor %}
+{% include "pagination.html" with page=posts %}
+{% endblock %}
